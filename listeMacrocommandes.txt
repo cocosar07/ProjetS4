@@ -1,0 +1,2 @@
+macro_commande1;mpl d 10 lent;mpi h 5 rapide
+macro_commande2;mpi b 15 rapide;mpl d 10 lent;mpl g 15 rapide

@@ -1,0 +1,2 @@
+nom_test2121;macro_commande2;macro_commande1;macro_commande2;macro_commande1
+nom_test2112;macro_commande2;macro_commande1;macro_commande1;macro_commande2

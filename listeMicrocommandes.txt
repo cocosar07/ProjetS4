@@ -1,0 +1,2 @@
+moteur_plateau;mpl;d g;?;rapide lent moyen
+moteur_pince;mpi;h b;?;rapide lent
