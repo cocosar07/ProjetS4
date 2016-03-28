@@ -5,6 +5,7 @@
 #include <QString>
 #include <QtSerialPort/QSerialPort>
 #include <QTime>
+#include <QMutex>
 #include "Test.hpp"
 
 #define COMMANDE_RECEIVED "r"
@@ -18,8 +19,11 @@ public:
     ConnectionThread(QObject *parent = 0);
     ~ConnectionThread();
 
-    void startSlave(const QString &portName, int waitTimeout, Test *test);
+    void startSlave(const QString &portName, int waitTimeout, Test *test, bool stepByStep);
     void run();
+
+public slots:
+    void sendCommand();
 
 signals:
     void result(const QString &s);
@@ -29,8 +33,11 @@ signals:
 
 private:
     QString portName;
+    QMutex mutex;
     int waitTimeout;
     bool quit;
+    bool stepByStep;
+    bool sendNextCommand;
     Test *test;
 };
 

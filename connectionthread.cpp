@@ -6,24 +6,31 @@ ConnectionThread::ConnectionThread(QObject *parent)
 }
 ConnectionThread::~ConnectionThread()
 {
+    mutex.lock();
     quit = true;
+    mutex.unlock();
     wait();
 }
 
-void ConnectionThread::startSlave(const QString &portName, int waitTimeout, Test *test)
+void ConnectionThread::startSlave(const QString &portName, int waitTimeout, Test *test, bool stepByStep)
 {
     if (!isRunning())
     {
         this->portName = portName;
         this->waitTimeout = waitTimeout;
         this->test = test;
-
+        this->stepByStep = stepByStep;
         start();
     }
 }
 
 void ConnectionThread::run()
 {
+    if(stepByStep)
+        sendNextCommand = false;
+    else
+        sendNextCommand = true;
+
     QSerialPort serial;
     serial.setPortName(portName);
     if (!serial.open(QIODevice::ReadWrite))
@@ -33,6 +40,13 @@ void ConnectionThread::run()
     }
 
     while (!quit) {
+        if(stepByStep)
+        {
+            while(!sendNextCommand);
+            mutex.lock();
+            sendNextCommand = false;
+            mutex.unlock();
+        }
         // Envoi microcommande
         serial.write(test->recupProchaineMicrocommande().c_str());
         if(!serial.waitForBytesWritten(waitTimeout))
@@ -66,4 +80,11 @@ void ConnectionThread::run()
             emit timeout(tr("Wait read response timeout %1").arg(QTime::currentTime().toString()));
         }
     }
+}
+
+void ConnectionThread::sendCommand()
+{
+    mutex.lock();
+    sendNextCommand = true;
+    mutex.unlock();
 }
