@@ -61,5 +61,9 @@ void ConnectionThread::run()
                 emit error("Not wanted response");
             }
         }
+        else
+        {
+            emit timeout(tr("Wait read response timeout %1").arg(QTime::currentTime().toString()));
+        }
     }
 }
